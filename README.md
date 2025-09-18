@@ -3,13 +3,14 @@
 A CLI tool for processing HAR (HTTP Archive) files to generate functional tests, HTML reports, Insomnia collections, curl suites, and perform regression analysis.
 
 [![npm version](https://badge.fury.io/js/harwise.svg)](https://badge.fury.io/js/harwise)
+[![CI](https://github.com/jcopperman/harwise/workflows/CI/badge.svg)](https://github.com/jcopperman/harwise/actions)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ✨ Features
 
 - **Functional Test Generation** - Generate Node.js/TypeScript tests with assertions, timing validation, and variable extraction
-- **HTML Reports** - Beautiful, self-contained reports with performance metrics and comparison views
+- **HTML Reports** - Self-contained reports with performance metrics and comparison views
 - **HAR Comparison** - Detect performance regressions with configurable thresholds
 - **Insomnia Collections** - Export API requests to Insomnia v4 format with environment variables
 - **Curl Suites** - Generate shell scripts for manual testing with masked headers
@@ -238,6 +239,16 @@ npm run build
 ## 📋 CI/CD Integration
 
 ### GitHub Actions Example
+
+See the complete workflow file: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+The workflow includes:
+- **Multi-Node testing** (Node 20.x and 22.x)
+- **CLI command testing** with fixture files
+- **Artifact uploads** for reports and generated files
+- **Release automation** for the main branch
+
+### Basic CI/CD Setup
 
 ```yaml
 name: API Testing
