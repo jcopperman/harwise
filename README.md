@@ -10,13 +10,7 @@ A CLI tool for processing HAR (HTTP Archive) files to generate functional tests,
 [![GitHub issues](https://img.shields.io/github/issues/jcopperman/harwise)](https://github.com/jcopperman/harwise/issues)
 [![GitHub stars](https://img.shields.io/github/stars/jcopperman/harwise)](https://github.com/jcopperman/harwise/stargazers)
 
-<<<<<<< HEAD
-> **Status Badges**: CI build status • Node.js compatibility • License • Last commit • Open issues • GitHub stars
->
-> *Note: npm and CI badges will show proper status after publishing to npm and pushing to GitHub.*
 
-=======
->>>>>>> 14069fb11000aa63efa632208a4fb09d3c2cb43d
 ## ✨ Features
 
 - **Functional Test Generation** - Generate Node.js/TypeScript tests with assertions, timing validation, and variable extraction
