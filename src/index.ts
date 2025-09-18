@@ -2,9 +2,9 @@
 
 import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'fs';
-import { statsCommand } from './commands/stats.js';
-import { compareCommand } from './commands/compare.js';
-import { testCommand } from './commands/test.js';
+import { statsCommand } from './commands/stats';
+import { compareCommand } from './commands/compare';
+import { testCommand } from './commands/test';
 import { parseHar } from './har.js';
 import { generateInsomniaCollection } from './insomnia.js';
 import { generateTests } from './tests-gen.js';
