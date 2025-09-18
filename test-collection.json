@@ -1,0 +1,57 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "resources": [
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "name": "Base",
+      "data": {
+        "base_url": "",
+        "auth_token": "token123"
+      }
+    },
+    {
+      "_id": "fld_root",
+      "_type": "request_group",
+      "name": "harwise import"
+    },
+    {
+      "_id": "req_0",
+      "_type": "request",
+      "parentId": "fld_root",
+      "name": "GET /v1/users?limit=10&sort=name",
+      "method": "GET",
+      "url": "https://api.example.com/v1/users?limit=10&sort=name",
+      "headers": [
+        {
+          "name": "authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "content-type",
+          "value": "application/json"
+        }
+      ],
+      "body": {}
+    },
+    {
+      "_id": "req_1",
+      "_type": "request",
+      "parentId": "fld_root",
+      "name": "POST /v1/login",
+      "method": "POST",
+      "url": "https://api.example.com/v1/login",
+      "headers": [
+        {
+          "name": "content-type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"user\",\n  \"password\": \"pass\"\n}"
+      }
+    }
+  ]
+}

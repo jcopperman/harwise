@@ -1,0 +1,26 @@
+{
+  "assertions": {
+    "global": {
+      "statusRange": [200, 399],
+      "maxTimePctOverSample": 25
+    },
+    "byUrl": [
+      {
+        "match": "/v1/users$",
+        "jsonpath": [
+          { "path": "$.data[*].id", "exists": true },
+          { "path": "$.data", "minLength": 1 }
+        ]
+      }
+    ]
+  },
+  "extract": [
+    { "match": "/login$", "from": "$.token", "to": "auth_token" },
+    { "match": "/v1/users", "from": "$.data[0].id", "to": "first_user_id" }
+  ],
+  "substitute": [
+    { "match": "/v1/users/\\d+", "pattern": "(\\d+)", "var": "first_user_id" }
+  ],
+  "maskHeaders": ["authorization", "cookie"],
+  "baseUrl": "https://api.example.com"
+}
