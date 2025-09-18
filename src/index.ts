@@ -2,12 +2,13 @@
 
 import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'fs';
-import { statsCommand } from './commands/stats';
-import { compareCommand } from './commands/compare';
-import { testCommand } from './commands/test';
+import { statsCommand } from './commands/stats.js';
+import { compareCommand } from './commands/compare.js';
+import { testCommand } from './commands/test.js';
 import { parseHar } from './har.js';
 import { generateInsomniaCollection } from './insomnia.js';
 import { generateTests } from './tests-gen.js';
+import { generateCurlSuite } from './curl-gen.js';
 
 const program = new Command();
 
@@ -27,6 +28,8 @@ program
   .option('--time-regress <pct>', 'fail threshold for latency regression', '10')
   .option('--size-regress <pct>', 'fail threshold for size regression', '15')
   .option('--out <file>', 'output file for report')
+  .option('--report <file>', 'HTML report output')
+  .option('--tag <label>', 'tag for reports')
   .action(compareCommand);
 
 const gen = program.command('gen');
@@ -64,9 +67,24 @@ gen
 gen
   .command('curl <harFile>')
   .description('generate curl suite')
-  .action((harFile) => {
-    // TODO: implement
-    console.log('Generating curl suite from', harFile);
+  .option('--out <file>', 'output file', 'suite.sh')
+  .option('--strict', 'add set -euo pipefail to script')
+  .action((harFile, options) => {
+    try {
+      const globalOptions = program.opts();
+      const harContent = readFileSync(harFile, 'utf-8');
+      const har = JSON.parse(harContent);
+      const samples = parseHar(har, globalOptions);
+
+      generateCurlSuite(samples, options.out, {
+        strict: options.strict,
+        maskHeaders: globalOptions.maskHeaders ? globalOptions.maskHeaders.split(',') : ['authorization', 'cookie'],
+        baseUrl: globalOptions.baseUrl
+      });
+    } catch (error) {
+      console.error('Error generating curl suite:', error);
+      process.exit(1);
+    }
   });
 
 gen
@@ -100,6 +118,7 @@ program
   .description('run functional tests')
   .option('--env <file>', 'environment file')
   .option('--report <file>', 'HTML report output')
+  .option('--tag <label>', 'tag for reports')
   .action(testCommand);
 
 // Global options

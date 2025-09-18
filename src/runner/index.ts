@@ -1,13 +1,19 @@
-import { readFileSync, readdirSync } from 'fs';
-import { join, extname } from 'path';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
+import { config } from 'dotenv';
 import { TestManifest } from '../tests-gen.js';
 
 export interface TestResult {
   name: string;
   status: 'pass' | 'fail';
   time: number;
-  error?: string;
   assertions: number;
+  error?: string;
+  timingBreakdown?: {
+    startTime: number;
+    endTime: number;
+    duration: number;
+  };
 }
 
 export interface TestContext {
@@ -19,12 +25,27 @@ export interface TestContext {
 export class TestRunner {
   private context: TestContext;
   private results: TestResult[] = [];
+  private envFile: string;
+  private extractedVars: Map<string, any> = new Map();
 
-  constructor() {
+  constructor(envFile?: string) {
+    this.envFile = envFile || '.env';
+
+    // Load environment variables
+    if (existsSync(this.envFile)) {
+      config({ path: this.envFile });
+    }
+
     this.context = {
       variables: new Map(),
-      set: (key: string, value: any) => this.context.variables.set(key, value),
-      get: (key: string) => this.context.variables.get(key)
+      set: (key: string, value: any) => {
+        this.context.variables.set(key, value);
+        this.extractedVars.set(key, value);
+      },
+      get: (key: string) => {
+        // First check extracted variables, then environment
+        return this.context.variables.get(key) || process.env[key];
+      }
     };
   }
 
@@ -39,6 +60,9 @@ export class TestRunner {
       const result = await this.runTest(join(testDir, test.file), test.name);
       this.results.push(result);
     }
+
+    // Save extracted variables
+    this.saveExtractedVars(testDir);
 
     return this.results;
   }
@@ -60,7 +84,12 @@ export class TestRunner {
         name: testName,
         status: 'pass',
         time: endTime - startTime,
-        assertions: 1 // TODO: Count actual assertions
+        assertions: 3, // status, content-type, timing (can be improved to count dynamically)
+        timingBreakdown: {
+          startTime,
+          endTime,
+          duration: endTime - startTime
+        }
       };
     } catch (error) {
       const endTime = Date.now();
@@ -69,7 +98,12 @@ export class TestRunner {
         status: 'fail',
         time: endTime - startTime,
         error: error instanceof Error ? error.message : String(error),
-        assertions: 0
+        assertions: 0,
+        timingBreakdown: {
+          startTime,
+          endTime,
+          duration: endTime - startTime
+        }
       };
     }
   }
@@ -98,6 +132,31 @@ export class TestRunner {
       p50: this.calculatePercentile(50),
       p95: this.calculatePercentile(95)
     };
+  }
+
+  private saveExtractedVars(testDir: string): void {
+    if (this.extractedVars.size === 0) return;
+
+    const envPath = join(testDir, '.harwise.env.json');
+    const envData: Record<string, any> = {};
+
+    // Load existing env file if it exists
+    if (existsSync(envPath)) {
+      try {
+        const existing = JSON.parse(readFileSync(envPath, 'utf-8'));
+        Object.assign(envData, existing);
+      } catch {
+        // Ignore parse errors
+      }
+    }
+
+    // Add extracted variables
+    for (const [key, value] of this.extractedVars) {
+      envData[key] = value;
+    }
+
+    writeFileSync(envPath, JSON.stringify(envData, null, 2));
+    console.log(`Extracted variables saved to ${envPath}`);
   }
 
   private calculatePercentile(percentile: number): number {

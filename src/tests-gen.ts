@@ -110,10 +110,44 @@ export default async function test_${index}(ctx: any) {
   }
 
   testCode += `
-  const response = await fetch(url, {
-    method: '${sample.method}',
-    headers
+  // Apply variable substitutions
+  let finalUrl = url;
+  let requestBody = ${sample.reqBody ? `'${sample.reqBody.replace(/'/g, "\\'")}'` : 'undefined'};
+`;
+
+  // Add substitution logic
+  const substituteRules = config.substitute.filter(s => {
+    try {
+      return new RegExp(s.match).test(urlPattern);
+    } catch {
+      return false;
+    }
   });
+
+  if (substituteRules.length > 0) {
+    for (const rule of substituteRules) {
+      testCode += `  const ${rule.var}Value = ctx.get('${rule.var}');
+  if (${rule.var}Value) {
+    finalUrl = finalUrl.replace(new RegExp('${rule.pattern}'), ${rule.var}Value);
+    if (requestBody) {
+      requestBody = requestBody.replace(new RegExp('${rule.pattern}'), ${rule.var}Value);
+    }
+  }
+`;
+    }
+  }
+
+  testCode += `
+  const startTime = Date.now();
+
+  const response = await fetch(finalUrl, {
+    method: '${sample.method}',
+    headers${sample.reqBody ? `,
+    body: requestBody` : ''}
+  });
+
+  const endTime = Date.now();
+  const responseTime = endTime - startTime;
 
   // Auto-assertions
   assert.ok(response.status >= ${config.assertions.global.statusRange[0]} && response.status < ${config.assertions.global.statusRange[1]},
@@ -126,7 +160,9 @@ export default async function test_${index}(ctx: any) {
   }
 
   // Timing assertion
-  // Note: Timing assertions would require wrapping fetch with timing logic
+  const maxAllowedTime = Math.ceil(${sample.time} * (1 + ${config.assertions.global.maxTimePctOverSample} / 100));
+  assert.ok(responseTime <= maxAllowedTime,
+    \`Response time \${responseTime}ms exceeded limit of \${maxAllowedTime}ms (sample: ${sample.time}ms)\`);
 
   const responseText = await response.text();
   let responseData;
@@ -173,12 +209,18 @@ export default async function test_${index}(ctx: any) {
   if (extractRules.length > 0) {
     testCode += `
   // Extract variables
+  if (responseData) {
 `;
     for (const rule of extractRules) {
-      testCode += `  const ${rule.to} = JSONPath({ path: '${rule.from}', json: responseData })[0];
-  if (${rule.to}) ctx.set('${rule.to}', ${rule.to});
+      testCode += `    const ${rule.to}Value = JSONPath({ path: '${rule.from}', json: responseData })[0];
+    if (${rule.to}Value !== undefined) {
+      ctx.set('${rule.to}', ${rule.to}Value);
+      console.log('Extracted ${rule.to}:', ${rule.to}Value);
+    }
 `;
     }
+    testCode += `  }
+`;
   }
 
   testCode += `}

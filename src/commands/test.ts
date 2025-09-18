@@ -1,7 +1,9 @@
 import { TestRunner } from '../runner/index.js';
+import { generateHtmlReport, ReportData } from '../report-html.js';
+import { writeFileSync } from 'fs';
 
 export function testCommand(options: any) {
-  const runner = new TestRunner();
+  const runner = new TestRunner(options.env);
 
   runner.runTests(options.tests || 'tests')
     .then(results => {
@@ -24,9 +26,33 @@ export function testCommand(options: any) {
         process.exit(1);
       }
 
-      // TODO: Generate HTML report if --report is specified
+      // Generate HTML report if --report is specified
       if (options.report) {
-        console.log(`\nHTML report would be generated at: ${options.report}`);
+        const reportData: ReportData = {
+          meta: {
+            tag: options.tag || process.env.CI_COMMIT_TAG || 'local',
+            when: new Date().toISOString(),
+            environment: options.env || 'test'
+          },
+          summary: {
+            total: summary.total,
+            passed: summary.passed,
+            failed: summary.failed,
+            p50: summary.p50,
+            p95: summary.p95
+          },
+          cases: results.map(r => ({
+            name: r.name,
+            status: r.status,
+            time: r.time,
+            assertions: r.assertions,
+            error: r.error
+          }))
+        };
+
+        const html = generateHtmlReport(reportData);
+        writeFileSync(options.report, html);
+        console.log(`\nHTML report generated: ${options.report}`);
       }
     })
     .catch(error => {
