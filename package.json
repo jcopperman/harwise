@@ -1,6 +1,6 @@
 {
   "name": "harwise",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "CLI tool for processing HAR files to generate Insomnia collections, functional tests, HTML reports, and more",
   "main": "dist/index.js",
