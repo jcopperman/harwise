@@ -25,7 +25,7 @@ export function generateTests(samples, outputDir = 'tests', config) {
     // Generate individual test files
     samples.forEach((sample, index) => {
         const testFile = generateTestFile(sample, index, finalConfig);
-        const fileName = `test_${index}.spec.ts`;
+        const fileName = `test_${index}.spec.js`;
         const filePath = `${outputDir}/${fileName}`;
         writeFileSync(filePath, testFile);
         manifest.tests.push({
@@ -45,9 +45,9 @@ import { JSONPath } from 'jsonpath-plus';
 
 const BASE_URL = '${baseUrl}';
 
-export default async function test_${index}(ctx: any) {
+export default async function test_${index}(ctx) {
   const url = \`${baseUrl}${normalizePath(sample.url, baseUrl)}\`;
-  const headers: Record<string, string> = {};
+  const headers = {};
 
   // Set headers
 `;

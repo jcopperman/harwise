@@ -3,7 +3,7 @@
 A powerful CLI tool for processing HAR (HTTP Archive) files to generate functional tests, HTML reports, Insomnia collections, curl suites, and perform regression analysis.
 
 [![npm version](https://badge.fury.io/js/harwise.svg)](https://badge.fury.io/js/harwise)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## ✨ Features
@@ -76,7 +76,7 @@ harwise gen tests my-api.har --out tests/ --config hw.config.json
 - `--config <file>` - Configuration file path
 
 **Generated Files:**
-- `tests/test_0.spec.ts`, `tests/test_1.spec.ts`, ... - Individual test files
+- `tests/test_0.spec.js`, `tests/test_1.spec.js`, ... - Individual test files
 - `tests/.harwise.manifest.json` - Test execution manifest
 - `tests/.harwise.env.json` - Extracted variables (after running tests)
 
@@ -100,6 +100,7 @@ harwise test --env .env --report report.html --tag "build-123"
 - ✅ JSON schema validation
 - ✅ Variable extraction and chaining
 - ✅ Environment variable support
+- ✅ HTML reports generated even when tests fail
 
 ### `harwise compare <baselineHar> <newHar>`
 
@@ -210,7 +211,7 @@ Generated reports include:
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= 20.0.0
 - npm or yarn
 
 ### Setup
@@ -248,7 +249,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 20 }
 
       - name: Install harwise
         run: npm install -g harwise

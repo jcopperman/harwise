@@ -23,7 +23,6 @@ export function testCommand(options: any) {
         results.filter(r => r.status === 'fail').forEach(result => {
           console.log(`- ${result.name}: ${result.error}`);
         });
-        process.exit(1);
       }
 
       // Generate HTML report if --report is specified
@@ -53,6 +52,10 @@ export function testCommand(options: any) {
         const html = generateHtmlReport(reportData);
         writeFileSync(options.report, html);
         console.log(`\nHTML report generated: ${options.report}`);
+      }
+
+      if (summary.failed > 0) {
+        process.exit(1);
       }
     })
     .catch(error => {

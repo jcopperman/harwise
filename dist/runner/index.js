@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { config } from 'dotenv';
 export class TestRunner {
     context;
@@ -25,17 +25,20 @@ export class TestRunner {
         };
     }
     async runTests(testDir = 'tests') {
+        // Resolve test directory to absolute path
+        const absoluteTestDir = resolve(testDir);
+        const manifestPath = join(absoluteTestDir, '.harwise.manifest.json');
         // Load manifest
-        const manifestPath = join(testDir, '.harwise.manifest.json');
         const manifestContent = readFileSync(manifestPath, 'utf-8');
         const manifest = JSON.parse(manifestContent);
         // Run tests in order
         for (const test of manifest.tests) {
-            const result = await this.runTest(join(testDir, test.file), test.name);
+            const testFilePath = join(absoluteTestDir, test.file);
+            const result = await this.runTest(testFilePath, test.name);
             this.results.push(result);
         }
         // Save extracted variables
-        this.saveExtractedVars(testDir);
+        this.saveExtractedVars(absoluteTestDir);
         return this.results;
     }
     async runTest(filePath, testName) {
