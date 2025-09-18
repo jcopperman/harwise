@@ -6,6 +6,11 @@ A CLI tool for processing HAR (HTTP Archive) files to generate functional tests,
 [![CI](https://github.com/jcopperman/harwise/workflows/CI/badge.svg)](https://github.com/jcopperman/harwise/actions)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub last commit](https://img.shields.io/github/last-commit/jcopperman/harwise)](https://github.com/jcopperman/harwise/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/jcopperman/harwise)](https://github.com/jcopperman/harwise/issues)
+[![GitHub stars](https://img.shields.io/github/stars/jcopperman/harwise)](https://github.com/jcopperman/harwise/stargazers)
+
+> **Status Badges**: CI build status • Node.js compatibility • License • Last commit • Open issues • GitHub stars
 
 ## ✨ Features
 
