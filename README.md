@@ -1,6 +1,6 @@
 # harwise
 
-A powerful CLI tool for processing HAR (HTTP Archive) files to generate functional tests, HTML reports, Insomnia collections, curl suites, and perform regression analysis.
+A CLI tool for processing HAR (HTTP Archive) files to generate functional tests, HTML reports, Insomnia collections, curl suites, and perform regression analysis.
 
 [![npm version](https://badge.fury.io/js/harwise.svg)](https://badge.fury.io/js/harwise)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
