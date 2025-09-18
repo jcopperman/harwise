@@ -3,6 +3,7 @@ import { ApiSample } from './har.js';
 export interface FilterOptions {
   include?: string;
   exclude?: string;
+  template?: boolean;
 }
 
 export function filterSamples(samples: ApiSample[], options: FilterOptions): ApiSample[] {
@@ -12,10 +13,12 @@ export function filterSamples(samples: ApiSample[], options: FilterOptions): Api
       return false;
     }
 
+    const targetUrl = (options.template === false ? sample.url : (sample.templatedUrl || sample.url));
+
     // Include regex
     if (options.include) {
       const includeRegex = new RegExp(options.include);
-      if (!includeRegex.test(sample.url)) {
+      if (!includeRegex.test(targetUrl)) {
         return false;
       }
     }
@@ -23,7 +26,7 @@ export function filterSamples(samples: ApiSample[], options: FilterOptions): Api
     // Exclude regex
     if (options.exclude) {
       const excludeRegex = new RegExp(options.exclude);
-      if (excludeRegex.test(sample.url)) {
+      if (excludeRegex.test(targetUrl)) {
         return false;
       }
     }
@@ -54,5 +57,6 @@ function isApiLike(sample: ApiSample): boolean {
 }
 
 export function generateKey(sample: ApiSample): string {
-  return `${sample.method} ${sample.url}`;
+  const idUrl = sample.templatedUrl || sample.url;
+  return `${sample.method} ${idUrl}`;
 }

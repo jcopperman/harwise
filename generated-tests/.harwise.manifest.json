@@ -1,11 +1,11 @@
 {
   "tests": [
     {
-      "file": "test_0.spec.ts",
+      "file": "test_0.spec.js",
       "name": "GET https://api.example.com/v1/users?limit=10&sort=name"
     },
     {
-      "file": "test_1.spec.ts",
+      "file": "test_1.spec.js",
       "name": "POST https://api.example.com/v1/login"
     }
   ],

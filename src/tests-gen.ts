@@ -77,7 +77,7 @@ export function generateTests(samples: ApiSample[], outputDir: string = 'tests',
 
     manifest.tests.push({
       file: fileName,
-      name: `${sample.method} ${sample.url}`
+      name: `${sample.method} ${sample.templatedUrl || sample.url}`
     });
   });
 

@@ -4,17 +4,27 @@ import { JSONPath } from 'jsonpath-plus';
 
 const BASE_URL = 'https://api.example.com';
 
-export default async function test_0(ctx: any) {
-  const url = `https://api.example.com/v1/users?limit=10&sort=name`;
-  const headers: Record<string, string> = {};
+export default async function test_1(ctx) {
+  const url = `https://api.example.com/v1/login`;
+  const headers = {};
 
   // Set headers
   headers['content-type'] = 'application/json';
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
+  // Apply variable substitutions
+  let finalUrl = url;
+  let requestBody = '{"username": "user", "password": "pass"}';
+
+  const startTime = Date.now();
+
+  const response = await fetch(finalUrl, {
+    method: 'POST',
+    headers,
+    body: requestBody
   });
+
+  const endTime = Date.now();
+  const responseTime = endTime - startTime;
 
   // Auto-assertions
   assert.ok(response.status >= 200 && response.status < 399,
@@ -27,7 +37,9 @@ export default async function test_0(ctx: any) {
   }
 
   // Timing assertion
-  // Note: Timing assertions would require wrapping fetch with timing logic
+  const maxAllowedTime = Math.ceil(200 * (1 + 25 / 100));
+  assert.ok(responseTime <= maxAllowedTime,
+    `Response time ${responseTime}ms exceeded limit of ${maxAllowedTime}ms (sample: 200ms)`);
 
   const responseText = await response.text();
   let responseData;

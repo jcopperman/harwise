@@ -4,17 +4,18 @@ export function filterSamples(samples, options) {
         if (!isApiLike(sample)) {
             return false;
         }
+        const targetUrl = (options.template === false ? sample.url : (sample.templatedUrl || sample.url));
         // Include regex
         if (options.include) {
             const includeRegex = new RegExp(options.include);
-            if (!includeRegex.test(sample.url)) {
+            if (!includeRegex.test(targetUrl)) {
                 return false;
             }
         }
         // Exclude regex
         if (options.exclude) {
             const excludeRegex = new RegExp(options.exclude);
-            if (excludeRegex.test(sample.url)) {
+            if (excludeRegex.test(targetUrl)) {
                 return false;
             }
         }
@@ -39,5 +40,6 @@ function isApiLike(sample) {
     return false;
 }
 export function generateKey(sample) {
-    return `${sample.method} ${sample.url}`;
+    const idUrl = sample.templatedUrl || sample.url;
+    return `${sample.method} ${idUrl}`;
 }

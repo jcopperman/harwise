@@ -30,7 +30,7 @@ export function generateTests(samples, outputDir = 'tests', config) {
         writeFileSync(filePath, testFile);
         manifest.tests.push({
             file: fileName,
-            name: `${sample.method} ${sample.url}`
+            name: `${sample.method} ${sample.templatedUrl || sample.url}`
         });
     });
     // Write manifest

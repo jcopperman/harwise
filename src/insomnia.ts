@@ -68,7 +68,7 @@ export function generateInsomniaCollection(samples: ApiSample[], options: Insomn
       _id: requestId,
       _type: 'request',
       parentId: groupId,
-      name: `${sample.method} ${getEndpointName(sample.url)}`,
+      name: `${sample.method} ${getEndpointName(sample.templatedUrl || sample.url)}`,
       method: sample.method,
       url: normalizeUrl(sample.url, options.baseUrl),
       headers: generateHeaders(sample.reqHeaders, options.maskHeaders || []),
