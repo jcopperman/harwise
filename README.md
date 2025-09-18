@@ -2,8 +2,8 @@
 
 A CLI tool for processing HAR (HTTP Archive) files to generate functional tests, HTML reports, Insomnia collections, curl suites, and perform regression analysis.
 
-[![npm version](https://badge.fury.io/js/harwise.svg)](https://badge.fury.io/js/harwise)
-[![CI](https://github.com/jcopperman/harwise/workflows/CI/badge.svg)](https://github.com/jcopperman/harwise/actions)
+[![npm version](https://img.shields.io/npm/v/harwise.svg)](https://www.npmjs.com/package/harwise)
+[![CI](https://github.com/jcopperman/harwise/actions/workflows/ci.yml/badge.svg)](https://github.com/jcopperman/harwise/actions/workflows/ci.yml)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub last commit](https://img.shields.io/github/last-commit/jcopperman/harwise)](https://github.com/jcopperman/harwise/commits/main)
@@ -11,6 +11,8 @@ A CLI tool for processing HAR (HTTP Archive) files to generate functional tests,
 [![GitHub stars](https://img.shields.io/github/stars/jcopperman/harwise)](https://github.com/jcopperman/harwise/stargazers)
 
 > **Status Badges**: CI build status • Node.js compatibility • License • Last commit • Open issues • GitHub stars
+>
+> *Note: npm and CI badges will show proper status after publishing to npm and pushing to GitHub.*
 
 ## ✨ Features
 
