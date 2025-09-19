@@ -10,6 +10,7 @@ A CLI tool for processing HAR (HTTP Archive) files to generate functional tests,
 [![GitHub issues](https://img.shields.io/github/issues/jcopperman/harwise)](https://github.com/jcopperman/harwise/issues)
 [![GitHub stars](https://img.shields.io/github/stars/jcopperman/harwise)](https://github.com/jcopperman/harwise/stargazers)
 
+![harwise](image.png)
 
 ## ✨ Features
 
