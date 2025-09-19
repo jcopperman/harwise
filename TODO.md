@@ -1,2 +1,0 @@
-- [ ] Create React UI
-- [ ] Add authentication
