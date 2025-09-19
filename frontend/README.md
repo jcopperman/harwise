@@ -1,69 +1,67 @@
-# React + TypeScript + Vite
+# Harwise Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React web interface for the Harwise CLI tool.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎯 **Dashboard** - Overview and quick actions
+- 🔍 **Compare** - Compare two HAR files for differences
+- ⚙️ **Generate** - Create tests, Insomnia collections, and curl suites
+- 📊 **Stats** - Analyze HAR file statistics
+- 🧪 **Test** - Run generated test suites
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling
+- **React Router** for navigation
+- **React Query** for server state management
+- **React Dropzone** for file uploads
+- **Lucide React** for icons
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Install dependencies
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/     # Reusable UI components
+│   └── Layout.tsx  # Main layout with navigation
+├── pages/          # Page components
+│   ├── Dashboard.tsx
+│   ├── Compare.tsx
+│   ├── Generate.tsx
+│   ├── Stats.tsx
+│   └── Test.tsx
+├── App.tsx         # Main app component with routing
+├── main.tsx        # Entry point
+└── index.css       # Global styles
+```
+
+## API Integration
+
+The frontend communicates with a backend server (port 3001) that wraps the Harwise CLI functionality. API calls are proxied through Vite's dev server.
+
+## Next Steps
+
+1. Install dependencies and run the development server
+2. Implement backend API server
+3. Add file upload functionality
+4. Build individual feature components
+5. Add real-time progress tracking
+6. Implement results visualization
