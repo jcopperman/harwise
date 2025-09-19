@@ -32,12 +32,6 @@ app.use(express.urlencoded({ extended: true }))
 const uploadsDir = path.join(__dirname, '../../uploads')
 const outputsDir = path.join(__dirname, '../../outputs')
 
-// Ensure directories exist
-await Promise.all([
-  fs.mkdir(uploadsDir, { recursive: true }),
-  fs.mkdir(outputsDir, { recursive: true })
-])
-
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: uploadsDir,
@@ -102,7 +96,7 @@ app.post('/api/stats', upload.single('harFile'), async (req, res) => {
     const outputPath = path.join(outputsDir, `stats-${uuidv4()}.json`)
     
     // Run harwise stats command
-    const command = `node ../dist/index.js stats "${harPath}" --out "${outputPath}"`
+    const command = `node ../../dist/index.js stats "${harPath}" --out "${outputPath}"`
     const { stdout, stderr } = await execAsync(command, { cwd: __dirname })
     
     if (stderr) {
@@ -143,7 +137,7 @@ app.post('/api/compare', upload.fields([
     const outputPath = path.join(outputsDir, `comparison-${uuidv4()}.md`)
     
     // Run harwise compare command
-    const command = `node ../dist/index.js compare "${harPath1}" "${harPath2}" --out "${outputPath}"`
+    const command = `node ../../dist/index.js compare "${harPath1}" "${harPath2}" --out "${outputPath}"`
     const { stdout, stderr } = await execAsync(command, { cwd: __dirname })
     
     if (stderr) {
@@ -189,14 +183,14 @@ app.post('/api/generate/:type', upload.single('harFile'), async (req, res) => {
     let outputFile: string | undefined
 
     if (type === 'tests') {
-      command = `node ../dist/index.js gen tests "${harPath}" --out "${outputPath}"`
+      command = `node ../../dist/index.js gen tests "${harPath}" --out "${outputPath}"`
       outputFile = outputPath // Directory for tests
     } else if (type === 'insomnia') {
       outputFile = `${outputPath}.json`
-      command = `node ../dist/index.js gen insomnia "${harPath}" --out "${outputFile}"`
+      command = `node ../../dist/index.js gen insomnia "${harPath}" --out "${outputFile}"`
     } else if (type === 'curl') {
       outputFile = `${outputPath}.sh`
-      command = `node ../dist/index.js gen curl "${harPath}" --out "${outputFile}"`
+      command = `node ../../dist/index.js gen curl "${harPath}" --out "${outputFile}"`
     }
 
     if (!command || !outputFile) {
@@ -250,7 +244,7 @@ app.post('/api/test', upload.single('harFile'), async (req, res) => {
     const outputPath = path.join(outputsDir, `test-results-${uuidv4()}.html`)
     
     // Run harwise test command
-    const command = `node ../dist/index.js test "${harPath}" --out "${outputPath}"`
+    const command = `node ../../dist/index.js test "${harPath}" --out "${outputPath}"`
     const { stdout, stderr } = await execAsync(command, { cwd: __dirname })
     
     if (stderr) {
@@ -291,8 +285,23 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found' })
 })
 
-app.listen(PORT, () => {
-  console.log(`🚀 Harwise API server running on port ${PORT}`)
-  console.log(`📁 Uploads directory: ${uploadsDir}`)
-  console.log(`📁 Outputs directory: ${outputsDir}`)
-})
+async function startServer() {
+  try {
+    // Ensure directories exist
+    await Promise.all([
+      fs.mkdir(uploadsDir, { recursive: true }),
+      fs.mkdir(outputsDir, { recursive: true })
+    ])
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Harwise API server running on port ${PORT}`)
+      console.log(`📁 Uploads directory: ${uploadsDir}`)
+      console.log(`📁 Outputs directory: ${outputsDir}`)
+    })
+  } catch (error) {
+    console.error('Failed to start server:', error)
+    process.exit(1)
+  }
+}
+
+startServer()
