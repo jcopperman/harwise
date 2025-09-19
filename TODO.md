@@ -1,3 +1,2 @@
-- [x] Set up project structure
 - [ ] Create React UI
 - [ ] Add authentication
