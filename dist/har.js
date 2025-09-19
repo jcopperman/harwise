@@ -30,11 +30,15 @@ export function parseHar(har, options = {}) {
         // Get bodies (if present)
         const reqBody = request.postData ? request.postData.text : undefined;
         const resBody = response.content ? response.content.text : undefined;
-        // Canonicalize URL
-        const url = canonicalizeUrl(request.url);
+        // Canonicalize URL and build templated variant
+        const { canonUrl, templatedUrl } = canonicalizeUrl(request.url);
+        const useTemplating = options.template !== false; // default ON
+        const url = canonUrl;
         const sample = {
             method: request.method,
             url,
+            originalUrl: request.url,
+            templatedUrl: useTemplating ? templatedUrl : undefined,
             status: response.status,
             time,
             size,
@@ -58,15 +62,52 @@ export function parseHar(har, options = {}) {
 function canonicalizeUrl(url) {
     try {
         const u = new URL(url);
-        // Sort query params
+        // Sort query params (keys and values) for deterministic ordering
         const params = new URLSearchParams(u.search);
-        const sortedParams = new URLSearchParams([...params.entries()].sort());
-        u.search = sortedParams.toString();
+        const entries = Array.from(params.entries());
+        entries.sort((a, b) => (a[0] === b[0] ? a[1].localeCompare(b[1]) : a[0].localeCompare(b[0])));
+        const sortedParams = new URLSearchParams(entries);
         // Remove fragment
         u.hash = '';
-        return u.toString();
+        const canonPath = u.pathname || '/';
+        const templatedPath = templatePath(canonPath);
+        const queryStr = sortedParams.toString();
+        const qs = queryStr ? `?${queryStr}` : '';
+        const origin = `${u.protocol}//${u.host}`;
+        const canonUrl = `${origin}${canonPath}${qs}`;
+        const templatedUrl = `${origin}${templatedPath}${qs}`;
+        return { canonUrl, templatedUrl };
     }
     catch {
-        return url;
+        // Fallback: best-effort string ops
+        try {
+            // If not a valid URL, just template the path part if it looks like a path
+            const templated = templatePath(url);
+            return { canonUrl: url, templatedUrl: templated };
+        }
+        catch {
+            return { canonUrl: url, templatedUrl: url };
+        }
     }
+}
+// Replace dynamic path segments with templates
+export function templatePath(pathname) {
+    const segments = pathname.split('/').map(seg => {
+        if (!seg)
+            return seg;
+        let s = seg;
+        try {
+            s = decodeURIComponent(seg);
+        }
+        catch { /* keep raw */ }
+        // UUID v1-5 pattern
+        const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (uuidRe.test(s))
+            return '{uuid}';
+        // Numeric ID (all digits)
+        if (/^\d+$/.test(s))
+            return '{id}';
+        return seg;
+    });
+    return segments.join('/');
 }

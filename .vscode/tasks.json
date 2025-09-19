@@ -1,0 +1,32 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run CLI smoke tests with templating",
+			"type": "shell",
+			"command": "node dist/index.js compare fixtures/test.har fixtures/test2.har --out comparison.md && node dist/index.js gen insomnia fixtures/test.har --out test-collection.json && node dist/index.js gen tests fixtures/test.har --out generated-tests/ && node dist/index.js gen curl fixtures/test.har --out test-suite.sh --strict",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Re-run compare after fix",
+			"type": "shell",
+			"command": "node dist/index.js compare fixtures/test.har fixtures/test2.har --out comparison.md",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Clean and regenerate artifacts",
+			"type": "shell",
+			"command": "rm -f comparison.md && node dist/index.js compare fixtures/test.har fixtures/test2.har --out comparison.md && rm -rf generated-tests && node dist/index.js gen tests fixtures/test.har --out generated-tests/ && node dist/index.js gen insomnia fixtures/test.har --out test-collection.json",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

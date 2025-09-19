@@ -47,6 +47,12 @@ harwise gen insomnia my-api.har --out collection.json
 
 # Create curl suite
 harwise gen curl my-api.har --out suite.sh --strict
+
+# Compare with templated paths (default)
+harwise compare old.har new.har
+
+# Disable templating if you want full URLs
+harwise compare old.har new.har --no-template
 ```
 
 ## 📖 Commands
@@ -201,6 +207,7 @@ All commands support these global options:
 - `--exclude <regex>` - Exclude URLs matching regex
 - `--mask-headers <list>` - Comma-separated list of headers to mask
 - `--base-url <url>` - Base URL for origin normalization
+- `--no-template` - Disable path templating of dynamic IDs/UUIDs
 - `--tag <label>` - Tag for report labeling
 
 ## 📊 HTML Reports

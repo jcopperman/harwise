@@ -20,7 +20,11 @@ program
 program
   .command('stats <harFile>')
   .description('quick summary of HAR file')
-  .action(statsCommand);
+  .action((harFile, options) => {
+    // Merge global options (e.g., include/exclude/template)
+    const merged = { ...program.opts(), ...options };
+    return statsCommand(harFile, merged);
+  });
 
 program
   .command('compare <baselineHar> <newHar>')
@@ -30,7 +34,10 @@ program
   .option('--out <file>', 'output file for report')
   .option('--report <file>', 'HTML report output')
   .option('--tag <label>', 'tag for reports')
-  .action(compareCommand);
+  .action((baselineHar, newHar, options) => {
+    const merged = { ...program.opts(), ...options };
+    return compareCommand(baselineHar, newHar, merged);
+  });
 
 const gen = program.command('gen');
 
@@ -127,6 +134,7 @@ program
   .option('--exclude <regex>', 'exclude URL regex')
   .option('--mask-headers <list>', 'headers to mask', 'authorization,cookie')
   .option('--base-url <url>', 'base URL for normalization')
+  .option('--no-template', 'disable path templating in keys and reports')
   .option('--tag <label>', 'tag for reports');
 
 program.parse();
